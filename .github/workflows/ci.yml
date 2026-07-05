@@ -16,6 +16,7 @@ concurrency:
 
 permissions:
   contents: read
+  packages: write
 
 jobs:
   quality:
@@ -53,5 +54,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Authenticate to GHCR so the image can be published from the main branch.
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Generate branch, PR, SHA, and default-branch latest tags.
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
+
       - name: Build Docker image
-        run: docker build -t library-management:test .
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
