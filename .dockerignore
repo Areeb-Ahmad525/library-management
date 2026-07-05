@@ -8,32 +8,32 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-
-# Virtual Environment
 .venv/
-
-# Environment Files
-.env
-.env.*
-
-# Test & Lint Cache
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
+.coverage
+htmlcov/
+coverage/
 
-# IDE
+# Environment files
+.env
+.env.*
+
+# IDE/editor directories
 .vscode/
 .idea/
 
-# Operating System
+# OS files
 .DS_Store
 Thumbs.db
 
-# Docker
+# Docker overrides
 docker-compose.override.yml
 
-# Documentation
+# Local documentation or drafts
 README.md
+*.md
 
 # Logs
 *.log
