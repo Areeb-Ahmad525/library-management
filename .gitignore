@@ -2,21 +2,31 @@
 __pycache__/
 *.py[cod]
 *.pyo
+*.pyd
 
 # Virtual Environment
 .venv/
 
 # Environment Variables
 .env
+.env.local
 
-# VS Code
-.vscode/
-
-# Pytest
+# Testing and tooling caches
 .pytest_cache/
-
-# Ruff
+.mypy_cache/
 .ruff_cache/
+.coverage
+htmlcov/
+coverage/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# IDEs
+.vscode/
+.idea/
 
 # OS
 .DS_Store

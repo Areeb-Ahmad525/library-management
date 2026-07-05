@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.database.base import Base
-from src.exceptions import (
+from src.utils.exceptions import (
     BookAlreadyIssuedError,
     BookNotFoundError,
     DuplicateEmailError,

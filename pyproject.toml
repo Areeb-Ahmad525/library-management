@@ -1,12 +1,18 @@
 [project]
 name = "library-management"
 version = "0.1.0"
-description = "Add your description here"
+description = "Core Python library management system"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.13"
 dependencies = [
     "alembic>=1.18.5",
     "psycopg[binary]>=3.3.4",
     "python-dotenv>=1.2.2",
     "sqlalchemy>=2.0.51",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.13.0",
+    "ruff>=0.9.0",
 ]

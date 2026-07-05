@@ -1,26 +1,57 @@
-name: Initial CI
+name: CI
 
 on:
   pull_request:
     branches:
-      - staging
       - main
+      - staging
+  push:
+    branches:
+      - main
+      - staging
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  setup:
+  quality:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version-file: ".python-version"
 
-      - name: Sync Dependencies
-        run: uv sync
+      - name: Sync dependencies
+        run: uv sync --locked --no-dev
+
+      - name: Run ruff
+        run: uv run ruff check .
+
+      - name: Run mypy
+        run: uv run mypy src
+
+      - name: Run unit tests
+        run: uv run python -m unittest discover -s tests -q
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t library-management:test .

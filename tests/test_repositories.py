@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.database.base import Base
-from src.exceptions import BookNotFoundError, DuplicateEmailError, LoanNotFoundError, MemberNotFoundError
+from src.utils.exceptions import BookNotFoundError, DuplicateEmailError, LoanNotFoundError, MemberNotFoundError
 from src.repositories.book_repository import BookRepository
 from src.repositories.loan_repository import LoanRepository
 from src.repositories.member_repository import MemberRepository

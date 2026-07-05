@@ -1,10 +1,10 @@
 import logging
-import re
 from typing import List, Optional
 
 from src.database.models import Member
-from src.exceptions import DuplicateEmailError, MemberNotFoundError, ValidationError
 from src.repositories.member_repository import MemberRepository
+from src.utils.exceptions import DuplicateEmailError, MemberNotFoundError, ValidationError
+from src.utils.validators import normalize_optional_text, normalize_required_text, validate_email
 
 logger = logging.getLogger(__name__)
 
@@ -66,27 +66,25 @@ class MemberService:
         return True
 
     def _normalize_required_field(self, value: str, field_name: str) -> str:
-        normalized_value = value.strip() if isinstance(value, str) else ""
-        if not normalized_value:
+        try:
+            return normalize_required_text(value, field_name)
+        except ValueError as exc:
             logger.warning("Validation failure: %s is empty", field_name)
-            raise ValidationError(f"{field_name.capitalize()} cannot be empty.")
-        return normalized_value
+            raise ValidationError(str(exc)) from exc
 
     def _normalize_optional_field(self, value: Optional[str], field_name: str) -> Optional[str]:
-        if value is None:
-            return None
-        normalized_value = value.strip()
-        if not normalized_value:
+        try:
+            return normalize_optional_text(value, field_name)
+        except ValueError as exc:
             logger.warning("Validation failure: %s is empty", field_name)
-            raise ValidationError(f"{field_name.capitalize()} cannot be empty.")
-        return normalized_value
+            raise ValidationError(str(exc)) from exc
 
     def _validate_email(self, email: str) -> str:
-        normalized_email = self._normalize_required_field(email, "email")
-        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", normalized_email):
-            logger.warning("Validation failure: invalid email %s", normalized_email)
-            raise ValidationError("Email format is invalid.")
-        return normalized_email
+        try:
+            return validate_email(email)
+        except ValueError as exc:
+            logger.warning("Validation failure: invalid email %s", email)
+            raise ValidationError(str(exc)) from exc
 
     def _validate_optional_email(self, email: Optional[str]) -> Optional[str]:
         if email is None:

@@ -1,4 +1,3 @@
-import logging
 import sys
 from pathlib import Path
 
@@ -6,7 +5,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.cli import CLI
+from src.cli.cli import CLI
 from src.database.base import Base
 from src.database.session import SessionLocal, engine
 from src.repositories.book_repository import BookRepository
@@ -15,8 +14,9 @@ from src.repositories.member_repository import MemberRepository
 from src.services.book_service import BookService
 from src.services.loan_service import LoanService
 from src.services.member_service import MemberService
+from src.utils.logging_config import configure_logging
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
+configure_logging()
 
 
 def main() -> None:

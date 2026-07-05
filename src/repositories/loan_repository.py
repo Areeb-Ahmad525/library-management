@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from src.database.models import Book, Loan, Member
-from src.exceptions import BookNotFoundError, LoanNotFoundError, MemberNotFoundError
+from src.utils.exceptions import BookNotFoundError, LoanNotFoundError, MemberNotFoundError
 
 
 class LoanRepository:

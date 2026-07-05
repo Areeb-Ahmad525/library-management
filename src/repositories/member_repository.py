@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from src.database.models import Member
-from src.exceptions import DuplicateEmailError, MemberNotFoundError
+from src.utils.exceptions import DuplicateEmailError, MemberNotFoundError
 
 
 class MemberRepository:

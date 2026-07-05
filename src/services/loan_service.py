@@ -2,7 +2,7 @@ import logging
 from typing import List
 
 from src.database.models import Loan
-from src.exceptions import (
+from src.utils.exceptions import (
     BookAlreadyIssuedError,
     BookNotFoundError,
     LoanNotFoundError,

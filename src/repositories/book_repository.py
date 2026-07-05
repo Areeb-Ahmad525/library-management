@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from src.database.models import Book
-from src.exceptions import BookNotFoundError
+from src.utils.exceptions import BookNotFoundError
 
 
 class BookRepository:

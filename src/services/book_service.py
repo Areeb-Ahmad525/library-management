@@ -2,8 +2,9 @@ import logging
 from typing import List, Optional
 
 from src.database.models import Book
-from src.exceptions import BookNotFoundError, ValidationError
 from src.repositories.book_repository import BookRepository
+from src.utils.exceptions import BookNotFoundError, ValidationError
+from src.utils.validators import normalize_optional_text, normalize_required_text
 
 logger = logging.getLogger(__name__)
 
@@ -61,17 +62,15 @@ class BookService:
         return True
 
     def _normalize_required_field(self, value: str, field_name: str) -> str:
-        normalized_value = value.strip() if isinstance(value, str) else ""
-        if not normalized_value:
+        try:
+            return normalize_required_text(value, field_name)
+        except ValueError as exc:
             logger.warning("Validation failure: %s is empty", field_name)
-            raise ValidationError(f"{field_name.capitalize()} cannot be empty.")
-        return normalized_value
+            raise ValidationError(str(exc)) from exc
 
     def _normalize_optional_field(self, value: Optional[str], field_name: str) -> Optional[str]:
-        if value is None:
-            return None
-        normalized_value = value.strip()
-        if not normalized_value:
+        try:
+            return normalize_optional_text(value, field_name)
+        except ValueError as exc:
             logger.warning("Validation failure: %s is empty", field_name)
-            raise ValidationError(f"{field_name.capitalize()} cannot be empty.")
-        return normalized_value
+            raise ValidationError(str(exc)) from exc
