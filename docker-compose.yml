@@ -15,7 +15,6 @@ services:
 
     command: uv run python src/main.py
 
-    restart: unless-stopped
 
     networks:
       - library_network

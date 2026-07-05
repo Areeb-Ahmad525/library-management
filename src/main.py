@@ -1,5 +1,16 @@
+from sqlalchemy import text
+
+from database.session import SessionLocal
+
+
 def main():
-    print("Hello from library-management!")
+    db = SessionLocal()
+
+    result = db.execute(text("SELECT version();"))
+
+    print(result.scalar())
+
+    db.close()
 
 
 if __name__ == "__main__":
