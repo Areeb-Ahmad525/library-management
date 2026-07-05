@@ -142,6 +142,7 @@ class CLI:
             self._show_error(str(exc))
             return
 
+        assert book is not None
         self._print_success(
             "Book found.",
             {"ID": book.id, "Title": book.title, "Author": book.author},
@@ -209,6 +210,7 @@ class CLI:
             self._show_error(str(exc))
             return
 
+        assert member is not None
         self._print_success(
             "Member found.",
             {"ID": member.id, "Name": member.name, "Email": member.email},

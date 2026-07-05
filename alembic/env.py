@@ -29,8 +29,8 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 
-from src.database.base import Base
-from src.database import models
+from src.database.base import Base  # noqa: E402
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

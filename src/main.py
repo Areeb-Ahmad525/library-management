@@ -5,16 +5,16 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.cli.cli import CLI
-from src.database.base import Base
-from src.database.session import SessionLocal, engine
-from src.repositories.book_repository import BookRepository
-from src.repositories.loan_repository import LoanRepository
-from src.repositories.member_repository import MemberRepository
-from src.services.book_service import BookService
-from src.services.loan_service import LoanService
-from src.services.member_service import MemberService
-from src.utils.logging_config import configure_logging
+from src.cli.cli import CLI  # noqa: E402
+from src.database.base import Base  # noqa: E402
+from src.database.session import SessionLocal, engine  # noqa: E402
+from src.repositories.book_repository import BookRepository  # noqa: E402
+from src.repositories.loan_repository import LoanRepository  # noqa: E402
+from src.repositories.member_repository import MemberRepository  # noqa: E402
+from src.services.book_service import BookService  # noqa: E402
+from src.services.loan_service import LoanService  # noqa: E402
+from src.services.member_service import MemberService  # noqa: E402
+from src.utils.logging_config import configure_logging  # noqa: E402
 
 configure_logging()
 
