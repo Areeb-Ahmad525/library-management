@@ -1,7 +1,5 @@
 import unittest
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 from src.database.base import Base
 from src.utils.exceptions import BookNotFoundError, DuplicateEmailError, LoanNotFoundError, MemberNotFoundError

@@ -5,7 +5,6 @@ from src.database.models import Loan
 from src.utils.exceptions import (
     BookAlreadyIssuedError,
     BookNotFoundError,
-    LoanNotFoundError,
     MemberNotFoundError,
 )
 from src.repositories.book_repository import BookRepository

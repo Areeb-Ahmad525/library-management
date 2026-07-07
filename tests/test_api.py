@@ -4,7 +4,6 @@ from fastapi.testclient import TestClient
 
 from src.api.app import create_app
 from src.database.models import Book
-from src.database.session import SessionLocal
 
 
 class FastAPITests(unittest.TestCase):
