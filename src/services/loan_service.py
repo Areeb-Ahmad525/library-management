@@ -29,7 +29,21 @@ class LoanService:
         self.member_repository = member_repository
 
     def issue_book(self, book_id: int, member_id: int) -> Loan:
-        """Issue a loan for a book to a member if the business rules allow it."""
+        """
+        Issue a loan for a book to a member if the business rules allow it.
+
+        Args:
+            book_id (int): The unique identifier of the book.
+            member_id (int): The unique identifier of the member.
+
+        Returns:
+            Loan: The newly issued loan instance.
+
+        Raises:
+            BookNotFoundError: If the book does not exist.
+            MemberNotFoundError: If the member does not exist.
+            BookAlreadyIssuedError: If the book is already currently on loan.
+        """
         self._ensure_book_exists(book_id)
         self._ensure_member_exists(member_id)
         self._ensure_book_is_available(book_id)
@@ -39,22 +53,44 @@ class LoanService:
         return loan
 
     def return_book(self, loan_id: int) -> Loan:
-        """Return an active loan and mark it as completed."""
-        loan = self.loan_repository.get_active_loans()
-        active_loan_ids = {existing_loan.id for existing_loan in loan}
-        if loan_id not in active_loan_ids:
-            raise LoanNotFoundError(f"Loan with id {loan_id} was not found.")
+        """
+        Return an active loan and mark it as completed.
 
+        Args:
+            loan_id (int): The unique identifier of the loan.
+
+        Returns:
+            Loan: The returned loan instance.
+
+        Raises:
+            LoanNotFoundError: If the loan does not exist.
+        """
         returned_loan = self.loan_repository.return_book(loan_id)
         logger.info("Loan returned: loan_id=%s", loan_id)
         return returned_loan
 
     def get_active_loans(self) -> List[Loan]:
-        """Return all active loans."""
+        """
+        Return all active loans.
+
+        Returns:
+            List[Loan]: A list of all currently active loans.
+        """
         return self.loan_repository.get_active_loans()
 
     def get_member_loans(self, member_id: int) -> List[Loan]:
-        """Return all loans for a specific member."""
+        """
+        Return all loans for a specific member.
+
+        Args:
+            member_id (int): The unique identifier of the member.
+
+        Returns:
+            List[Loan]: A list of all loans associated with the member.
+        
+        Raises:
+            MemberNotFoundError: If the member does not exist.
+        """
         self._ensure_member_exists(member_id)
         return self.loan_repository.get_member_loans(member_id)
 
@@ -67,6 +103,7 @@ class LoanService:
             raise MemberNotFoundError(f"Member with id {member_id} was not found.")
 
     def _ensure_book_is_available(self, book_id: int) -> None:
-        active_loans = self.loan_repository.get_active_loans()
-        if any(loan.book_id == book_id for loan in active_loans):
+        """Validate that a book is not already actively loaned out."""
+        active_loans = self.loan_repository.get_book_loans(book_id)
+        if active_loans:
             raise BookAlreadyIssuedError(f"Book with id {book_id} is already on loan.")

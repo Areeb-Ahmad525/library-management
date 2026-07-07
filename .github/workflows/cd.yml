@@ -1,0 +1,54 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-to-ec2:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
+          envs: ENV_FILE
+          script: |
+            set -e
+
+            echo "Checking Git installation..."
+            if ! command -v git &> /dev/null; then
+              echo "Git is not installed. Installing Git..."
+              sudo apt-get update -y
+              sudo apt-get install -y git
+            fi
+
+            echo "Synchronizing repository..."
+            REPO_DIR=~/library-management
+            REPO_URL="https://github.com/${{ github.repository }}.git"
+
+            if [ ! -d "$REPO_DIR/.git" ]; then
+              echo "Repository not found or invalid. Cloning from GitHub..."
+              rm -rf "$REPO_DIR"
+              git clone $REPO_URL $REPO_DIR
+            fi
+            
+            cd $REPO_DIR
+            echo "Pulling the latest changes from the main branch..."
+            git fetch origin
+            git checkout main
+            git reset --hard origin/main
+
+            echo "Writing .env exclusively from GitHub Secrets..."
+            echo "$ENV_FILE" > .env
+
+            echo "Executing deployment script..."
+            chmod +x scripts/deploy.sh
+            bash scripts/deploy.sh

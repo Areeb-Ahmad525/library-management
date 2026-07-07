@@ -22,10 +22,13 @@ from src.services.member_service import MemberService
 
 class ServiceTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.engine = create_engine("sqlite:///:memory:")
-        Base.metadata.create_all(self.engine)
-        self.session_factory = sessionmaker(bind=self.engine)
-        self.session = self.session_factory()
+        from src.database.session import engine
+        from sqlalchemy.orm import Session
+
+        self.connection = engine.connect()
+        self.transaction = self.connection.begin()
+        self.session = Session(bind=self.connection, join_transaction_mode="create_savepoint")
+        Base.metadata.create_all(self.connection)
 
         self.book_repository = BookRepository(self.session)
         self.member_repository = MemberRepository(self.session)
@@ -41,19 +44,23 @@ class ServiceTests(unittest.TestCase):
 
     def tearDown(self) -> None:
         self.session.close()
-        self.engine.dispose()
+        self.transaction.rollback()
+        self.connection.close()
 
     def test_book_service_validates_inputs(self) -> None:
+        """Verify that the book service rejects empty titles or authors with a ValidationError."""
         with self.assertRaises(ValidationError):
             self.book_service.add_book("   ", "  ")
 
     def test_member_service_rejects_duplicate_email(self) -> None:
+        """Verify that the member service enforces unique email addresses."""
         self.member_service.register_member("Alice", "alice@example.com")
 
         with self.assertRaises(DuplicateEmailError):
             self.member_service.register_member("Alicia", "alice@example.com")
 
     def test_loan_service_prevents_duplicate_active_loans(self) -> None:
+        """Verify that a book cannot be issued to multiple members simultaneously."""
         book = self.book_service.add_book("Dune", "Frank Herbert")
         member = self.member_service.register_member("Bob", "bob@example.com")
 
@@ -63,6 +70,7 @@ class ServiceTests(unittest.TestCase):
             self.loan_service.issue_book(book.id, member.id)
 
     def test_loan_service_returns_book_and_raises_when_missing(self) -> None:
+        """Verify that returning a book succeeds, and returning it again raises a LoanNotFoundError."""
         book = self.book_service.add_book("1984", "George Orwell")
         member = self.member_service.register_member("Carol", "carol@example.com")
 
@@ -73,13 +81,14 @@ class ServiceTests(unittest.TestCase):
             self.loan_service.return_book(loan.id)
 
     def test_services_raise_domain_errors_for_missing_entities(self) -> None:
+        """Verify that issuing loans for non-existent books or members raises domain-specific exceptions."""
         with self.assertRaises(BookNotFoundError):
             self.loan_service.issue_book(999, 1)
 
-        self.book_service.add_book("1984", "George Orwell")
+        book = self.book_service.add_book("1984", "George Orwell")
 
         with self.assertRaises(MemberNotFoundError):
-            self.loan_service.issue_book(1, 999)
+            self.loan_service.issue_book(book.id, 999)
 
 
 if __name__ == "__main__":

@@ -9,7 +9,8 @@ __pycache__/
 
 # Environment Variables
 .env
-.env.local
+.env.*
+!.env.example
 
 # Testing and tooling caches
 .pytest_cache/
@@ -31,3 +32,8 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
+
+# Database
+*.db
+*.sqlite
+*.sqlite3

@@ -9,24 +9,33 @@ from src.database.session import SessionLocal
 
 class FastAPITests(unittest.TestCase):
     def setUp(self) -> None:
-        self.client = TestClient(create_app())
-        self.db = SessionLocal()
-        self.db.query(Book).filter(Book.title.in_(["The Hobbit", "Dune"])).delete(synchronize_session=False)
-        self.db.commit()
-        self.db.add_all(
+        from sqlalchemy.orm import Session
+        from src.database.session import engine
+        from src.api.app import get_db
+
+        self.connection = engine.connect()
+        self.transaction = self.connection.begin()
+        self.session = Session(bind=self.connection, join_transaction_mode="create_savepoint")
+        
+        app = create_app()
+        app.dependency_overrides[get_db] = lambda: self.session
+        self.client = TestClient(app)
+
+        self.session.add_all(
             [
                 Book(title="The Hobbit", author="J.R.R. Tolkien"),
                 Book(title="Dune", author="Frank Herbert"),
             ]
         )
-        self.db.commit()
+        self.session.flush()
 
     def tearDown(self) -> None:
-        self.db.query(Book).filter(Book.title.in_(["The Hobbit", "Dune"])).delete(synchronize_session=False)
-        self.db.commit()
-        self.db.close()
+        self.session.close()
+        self.transaction.rollback()
+        self.connection.close()
 
     def test_list_books_endpoint(self) -> None:
+        """Verify the /books endpoint successfully retrieves the list of books."""
         response = self.client.get("/books")
         self.assertEqual(response.status_code, 200)
         payload = response.json()
@@ -34,6 +43,7 @@ class FastAPITests(unittest.TestCase):
         self.assertTrue(any(item["title"] == "The Hobbit" for item in payload))
 
     def test_search_books_endpoint(self) -> None:
+        """Verify the /books/search endpoint accurately filters books by query parameters."""
         response = self.client.get("/books/search", params={"title": "hobbit"})
         self.assertEqual(response.status_code, 200)
         payload = response.json()

@@ -16,7 +16,19 @@ class BookService:
         self.book_repository = book_repository
 
     def add_book(self, title: str, author: str) -> Book:
-        """Create a new book after validating the provided values."""
+        """
+        Create a new book after validating the provided values.
+
+        Args:
+            title (str): The title of the book to add.
+            author (str): The author of the book.
+
+        Returns:
+            Book: The newly added book instance.
+
+        Raises:
+            ValidationError: If title or author is empty after normalization.
+        """
         normalized_title = self._normalize_required_field(title, "title")
         normalized_author = self._normalize_required_field(author, "author")
 
@@ -25,18 +37,43 @@ class BookService:
         return book
 
     def get_book(self, book_id: int) -> Optional[Book]:
-        """Return a book by id, or None if it is missing."""
+        """
+        Return a book by id, or raise an error if it is missing.
+
+        Args:
+            book_id (int): The unique identifier of the book.
+
+        Returns:
+            Book: The requested book instance.
+
+        Raises:
+            BookNotFoundError: If the book does not exist.
+        """
         book = self.book_repository.get_book_by_id(book_id)
         if book is None:
             raise BookNotFoundError(f"Book with id {book_id} was not found.")
         return book
 
     def list_books(self) -> List[Book]:
-        """Return all books in the repository."""
+        """
+        Return all books in the repository.
+
+        Returns:
+            List[Book]: A list of all books.
+        """
         return self.book_repository.get_all_books()
 
     def search_books(self, title: Optional[str] = None, author: Optional[str] = None) -> List[Book]:
-        """Search books by title and/or author through the repository."""
+        """
+        Search books by title and/or author through the repository.
+
+        Args:
+            title (Optional[str]): The substring to match in book titles.
+            author (Optional[str]): The substring to match in book authors.
+
+        Returns:
+            List[Book]: A list of matching books.
+        """
         return self.book_repository.search_books(title=title, author=author)
 
     def update_book(
@@ -45,7 +82,21 @@ class BookService:
         title: Optional[str] = None,
         author: Optional[str] = None,
     ) -> Book:
-        """Update a book after validating any provided values."""
+        """
+        Update a book after validating any provided values.
+
+        Args:
+            book_id (int): The unique identifier of the book.
+            title (Optional[str]): The new title, if provided.
+            author (Optional[str]): The new author, if provided.
+
+        Returns:
+            Book: The updated book instance.
+
+        Raises:
+            BookNotFoundError: If the book does not exist.
+            ValidationError: If the provided title or author is invalid/empty.
+        """
         self.get_book(book_id)
 
         normalized_title = self._normalize_optional_field(title, "title")
@@ -59,7 +110,18 @@ class BookService:
         return book
 
     def remove_book(self, book_id: int) -> bool:
-        """Remove a book after ensuring it exists."""
+        """
+        Remove a book after ensuring it exists.
+
+        Args:
+            book_id (int): The unique identifier of the book.
+
+        Returns:
+            bool: True if the book was successfully removed.
+
+        Raises:
+            BookNotFoundError: If the book does not exist.
+        """
         self.get_book(book_id)
         self.book_repository.delete_book(book_id)
         logger.info("Book removed: %s", book_id)
