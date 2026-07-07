@@ -2,7 +2,6 @@ import unittest
 
 
 from src.database.base import Base
-from src.database.models import Book, Member, Loan
 from src.utils.exceptions import (
     BookAlreadyIssuedError,
     BookNotFoundError,
@@ -53,6 +52,7 @@ class ServiceTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         from src.database.session import engine
+
         engine.dispose()
 
     def test_book_service_validates_inputs(self) -> None:

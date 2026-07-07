@@ -3,7 +3,7 @@ import unittest
 from fastapi.testclient import TestClient
 
 from src.api.app import create_app
-from src.database.models import Book, Member, Loan
+from src.database.models import Book
 from src.database.base import Base
 
 
@@ -18,7 +18,7 @@ class FastAPITests(unittest.TestCase):
         self.session = Session(
             bind=self.connection, join_transaction_mode="create_savepoint"
         )
-        
+
         for table in reversed(Base.metadata.sorted_tables):
             self.session.execute(table.delete())
 
@@ -43,6 +43,7 @@ class FastAPITests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         from src.database.session import engine
+
         engine.dispose()
 
     def test_list_books_endpoint(self) -> None:
