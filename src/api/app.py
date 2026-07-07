@@ -1,3 +1,5 @@
+from collections.abc import Generator
+
 from fastapi import Depends, FastAPI, Query
 from sqlalchemy.orm import Session
 
@@ -6,7 +8,7 @@ from src.repositories.book_repository import BookRepository
 from src.services.book_service import BookService
 
 
-def get_db() -> Session:
+def get_db() -> Generator[Session, None, None]:
     """
     Dependency generator that provides a database session for a request.
 
