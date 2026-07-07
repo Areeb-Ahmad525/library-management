@@ -2,6 +2,7 @@ import unittest
 
 
 from src.database.base import Base
+from src.database.models import Book, Member, Loan
 from src.utils.exceptions import (
     BookNotFoundError,
     DuplicateEmailError,
@@ -23,12 +24,19 @@ class RepositoryTests(unittest.TestCase):
         self.session = Session(
             bind=self.connection, join_transaction_mode="create_savepoint"
         )
-        Base.metadata.create_all(self.connection)
+
+        for table in reversed(Base.metadata.sorted_tables):
+            self.session.execute(table.delete())
 
     def tearDown(self) -> None:
         self.session.close()
         self.transaction.rollback()
         self.connection.close()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        from src.database.session import engine
+        engine.dispose()
 
     def test_book_repository_crud(self) -> None:
         """Verify standard CRUD operations for books (create, read, update, delete)."""

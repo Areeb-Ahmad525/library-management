@@ -2,6 +2,7 @@ import unittest
 
 
 from src.database.base import Base
+from src.database.models import Book, Member, Loan
 from src.utils.exceptions import (
     BookAlreadyIssuedError,
     BookNotFoundError,
@@ -28,7 +29,9 @@ class ServiceTests(unittest.TestCase):
         self.session = Session(
             bind=self.connection, join_transaction_mode="create_savepoint"
         )
-        Base.metadata.create_all(self.connection)
+
+        for table in reversed(Base.metadata.sorted_tables):
+            self.session.execute(table.delete())
 
         self.book_repository = BookRepository(self.session)
         self.member_repository = MemberRepository(self.session)
@@ -46,6 +49,11 @@ class ServiceTests(unittest.TestCase):
         self.session.close()
         self.transaction.rollback()
         self.connection.close()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        from src.database.session import engine
+        engine.dispose()
 
     def test_book_service_validates_inputs(self) -> None:
         """Verify that the book service rejects empty titles or authors with a ValidationError."""
