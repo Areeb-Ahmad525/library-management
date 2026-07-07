@@ -25,7 +25,9 @@ class ServiceTests(unittest.TestCase):
 
         self.connection = engine.connect()
         self.transaction = self.connection.begin()
-        self.session = Session(bind=self.connection, join_transaction_mode="create_savepoint")
+        self.session = Session(
+            bind=self.connection, join_transaction_mode="create_savepoint"
+        )
         Base.metadata.create_all(self.connection)
 
         self.book_repository = BookRepository(self.session)

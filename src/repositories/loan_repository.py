@@ -4,7 +4,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
 from src.database.models import Book, Loan, Member
-from src.utils.exceptions import BookNotFoundError, LoanNotFoundError, MemberNotFoundError
+from src.utils.exceptions import (
+    BookNotFoundError,
+    LoanNotFoundError,
+    MemberNotFoundError,
+)
 
 
 class LoanRepository:
@@ -81,11 +85,15 @@ class LoanRepository:
         Returns:
             List[Loan]: A list of all active loans with book and member eager loaded.
         """
-        return list(self.db.scalars(
-            select(Loan)
-            .options(joinedload(Loan.book), joinedload(Loan.member))
-            .order_by(Loan.id)
-        ).unique().all())
+        return list(
+            self.db.scalars(
+                select(Loan)
+                .options(joinedload(Loan.book), joinedload(Loan.member))
+                .order_by(Loan.id)
+            )
+            .unique()
+            .all()
+        )
 
     def get_member_loans(self, member_id: int) -> List[Loan]:
         """
@@ -96,7 +104,7 @@ class LoanRepository:
 
         Returns:
             List[Loan]: A list of the member's loans with books eager loaded.
-        
+
         Raises:
             MemberNotFoundError: If the member does not exist.
         """
@@ -110,7 +118,9 @@ class LoanRepository:
                 .options(joinedload(Loan.book), joinedload(Loan.member))
                 .where(Loan.member_id == member_id)
                 .order_by(Loan.id)
-            ).unique().all()
+            )
+            .unique()
+            .all()
         )
 
     def get_book_loans(self, book_id: int) -> List[Loan]:
@@ -136,5 +146,7 @@ class LoanRepository:
                 .options(joinedload(Loan.book), joinedload(Loan.member))
                 .where(Loan.book_id == book_id)
                 .order_by(Loan.id)
-            ).unique().all()
+            )
+            .unique()
+            .all()
         )

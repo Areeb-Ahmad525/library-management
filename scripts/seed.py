@@ -13,6 +13,7 @@ from src.database.models import Book, Member, Loan  # noqa: E402
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 def seed_data():
     db = SessionLocal()
     try:
@@ -58,6 +59,7 @@ def seed_data():
         raise e
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     seed_data()

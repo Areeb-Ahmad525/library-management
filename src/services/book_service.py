@@ -63,7 +63,9 @@ class BookService:
         """
         return self.book_repository.get_all_books()
 
-    def search_books(self, title: Optional[str] = None, author: Optional[str] = None) -> List[Book]:
+    def search_books(
+        self, title: Optional[str] = None, author: Optional[str] = None
+    ) -> List[Book]:
         """
         Search books by title and/or author through the repository.
 
@@ -134,7 +136,9 @@ class BookService:
             logger.warning("Validation failure: %s is empty", field_name)
             raise ValidationError(str(exc)) from exc
 
-    def _normalize_optional_field(self, value: Optional[str], field_name: str) -> Optional[str]:
+    def _normalize_optional_field(
+        self, value: Optional[str], field_name: str
+    ) -> Optional[str]:
         try:
             return normalize_optional_text(value, field_name)
         except ValueError as exc:

@@ -6,6 +6,7 @@ from src.database.base import Base
 
 class Book(Base):
     """Represents a book in the library catalog."""
+
     __tablename__ = "books"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -15,6 +16,7 @@ class Book(Base):
 
 class Member(Base):
     """Represents a registered library member."""
+
     __tablename__ = "members"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -24,11 +26,12 @@ class Member(Base):
 
 class Loan(Base):
     """Represents an active loan of a book by a member."""
+
     __tablename__ = "loans"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     book_id: Mapped[int] = mapped_column(ForeignKey("books.id"), index=True)
     member_id: Mapped[int] = mapped_column(ForeignKey("members.id"), index=True)
-    
+
     book: Mapped["Book"] = relationship()
     member: Mapped["Member"] = relationship()

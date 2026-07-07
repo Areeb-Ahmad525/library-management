@@ -2,7 +2,12 @@ import unittest
 
 
 from src.database.base import Base
-from src.utils.exceptions import BookNotFoundError, DuplicateEmailError, LoanNotFoundError, MemberNotFoundError
+from src.utils.exceptions import (
+    BookNotFoundError,
+    DuplicateEmailError,
+    LoanNotFoundError,
+    MemberNotFoundError,
+)
 from src.repositories.book_repository import BookRepository
 from src.repositories.loan_repository import LoanRepository
 from src.repositories.member_repository import MemberRepository
@@ -15,7 +20,9 @@ class RepositoryTests(unittest.TestCase):
 
         self.connection = engine.connect()
         self.transaction = self.connection.begin()
-        self.session = Session(bind=self.connection, join_transaction_mode="create_savepoint")
+        self.session = Session(
+            bind=self.connection, join_transaction_mode="create_savepoint"
+        )
         Base.metadata.create_all(self.connection)
 
     def tearDown(self) -> None:

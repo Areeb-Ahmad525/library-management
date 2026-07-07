@@ -51,7 +51,9 @@ class BookRepository:
         """
         return list(self.db.scalars(select(Book).order_by(Book.id)).all())
 
-    def search_books(self, title: Optional[str] = None, author: Optional[str] = None) -> List[Book]:
+    def search_books(
+        self, title: Optional[str] = None, author: Optional[str] = None
+    ) -> List[Book]:
         """
         Search books by title and/or author using case-insensitive matching.
 

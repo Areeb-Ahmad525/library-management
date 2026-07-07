@@ -84,7 +84,9 @@ class MemberRepository:
             raise MemberNotFoundError(f"Member with id {member_id} was not found.")
 
         if email is not None:
-            existing_member = self.db.scalar(select(Member).where(Member.email == email))
+            existing_member = self.db.scalar(
+                select(Member).where(Member.email == email)
+            )
             if existing_member is not None and existing_member.id != member_id:
                 raise DuplicateEmailError(f"Email {email} is already registered.")
             member.email = email

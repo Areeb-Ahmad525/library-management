@@ -14,8 +14,10 @@ class FastAPITests(unittest.TestCase):
 
         self.connection = engine.connect()
         self.transaction = self.connection.begin()
-        self.session = Session(bind=self.connection, join_transaction_mode="create_savepoint")
-        
+        self.session = Session(
+            bind=self.connection, join_transaction_mode="create_savepoint"
+        )
+
         app = create_app()
         app.dependency_overrides[get_db] = lambda: self.session
         self.client = TestClient(app)

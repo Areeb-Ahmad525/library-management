@@ -11,19 +11,20 @@ from src.main import main  # noqa: E402
 
 # Simulated inputs
 inputs = [
-    "1", # Select 'Book Management'
-    "2", # Select 'List Books' to see seeded data
-    "6", # Back to main menu
-    "2", # Select 'Member Management'
-    "1", # Select 'Register Member'
-    "Tony Stark", # Enter Name
-    "ironman@avengers.com", # Enter Email
-    "2", # Select 'List Members' to verify
-    "6", # Back to main menu
-    "4"  # Exit
+    "1",  # Select 'Book Management'
+    "2",  # Select 'List Books' to see seeded data
+    "6",  # Back to main menu
+    "2",  # Select 'Member Management'
+    "1",  # Select 'Register Member'
+    "Tony Stark",  # Enter Name
+    "ironman@avengers.com",  # Enter Email
+    "2",  # Select 'List Members' to verify
+    "6",  # Back to main menu
+    "4",  # Exit
 ]
 
 original_input = builtins.input
+
 
 def mock_input(prompt=""):
     if not inputs:
@@ -33,6 +34,7 @@ def mock_input(prompt=""):
     # Print the prompt and the simulated user input so the output looks like a real terminal
     print(f"{prompt}{val}")
     return val
+
 
 builtins.input = mock_input
 

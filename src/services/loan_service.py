@@ -86,7 +86,7 @@ class LoanService:
 
         Returns:
             List[Loan]: A list of all loans associated with the member.
-        
+
         Raises:
             MemberNotFoundError: If the member does not exist.
         """

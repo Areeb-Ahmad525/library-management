@@ -58,7 +58,10 @@ def create_app() -> FastAPI:
         book_repository = BookRepository(db)
         book_service = BookService(book_repository)
         books = book_service.list_books()
-        return [{"id": book.id, "title": book.title, "author": book.author} for book in books]
+        return [
+            {"id": book.id, "title": book.title, "author": book.author}
+            for book in books
+        ]
 
     @app.get("/books/search", response_model=list[dict[str, object]], tags=["Books"])
     def search_books(
@@ -80,7 +83,10 @@ def create_app() -> FastAPI:
         book_repository = BookRepository(db)
         book_service = BookService(book_repository)
         books = book_service.search_books(title=title, author=author)
-        return [{"id": book.id, "title": book.title, "author": book.author} for book in books]
+        return [
+            {"id": book.id, "title": book.title, "author": book.author}
+            for book in books
+        ]
 
     return app
 
