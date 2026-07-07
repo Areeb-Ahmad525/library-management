@@ -35,6 +35,10 @@ class BookService:
         """Return all books in the repository."""
         return self.book_repository.get_all_books()
 
+    def search_books(self, title: Optional[str] = None, author: Optional[str] = None) -> List[Book]:
+        """Search books by title and/or author through the repository."""
+        return self.book_repository.search_books(title=title, author=author)
+
     def update_book(
         self,
         book_id: int,

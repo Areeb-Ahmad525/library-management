@@ -29,6 +29,16 @@ class BookRepository:
         """Return all books ordered by id."""
         return list(self.db.scalars(select(Book).order_by(Book.id)).all())
 
+    def search_books(self, title: Optional[str] = None, author: Optional[str] = None) -> List[Book]:
+        """Search books by title and/or author using case-insensitive matching."""
+        query = select(Book)
+        if title is not None:
+            query = query.where(Book.title.ilike(f"%{title}%"))
+        if author is not None:
+            query = query.where(Book.author.ilike(f"%{author}%"))
+        query = query.order_by(Book.id)
+        return list(self.db.scalars(query).all())
+
     def update_book(
         self,
         book_id: int,
