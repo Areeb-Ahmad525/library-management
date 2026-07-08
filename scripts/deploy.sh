@@ -68,15 +68,6 @@ run_docker compose down || true
 echo "Building and starting containers in detached mode..."
 run_docker compose up -d --build
 
-# Handle Alembic Migrations
-echo "Checking for Alembic configuration..."
-if [ -d "alembic" ] && [ -f "alembic.ini" ]; then
-  echo "Alembic configuration detected! Executing database migrations..."
-  # Using -T to disable pseudo-TTY allocation since this runs in a GitHub Action
-  run_docker compose exec -T app alembic upgrade head
-else
-  echo "No Alembic configuration found. Skipping migrations."
-fi
 
 # Verify deployment
 echo "Verifying deployment..."
