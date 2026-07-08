@@ -35,5 +35,8 @@ docker-compose.override.yml
 README.md
 *.md
 
+# Tests
+tests/
+
 # Logs
 *.log

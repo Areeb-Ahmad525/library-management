@@ -3,8 +3,16 @@ from typing import List, Optional
 
 from src.database.models import Member
 from src.repositories.member_repository import MemberRepository
-from src.utils.exceptions import DuplicateEmailError, MemberNotFoundError, ValidationError
-from src.utils.validators import normalize_optional_text, normalize_required_text, validate_email
+from src.utils.exceptions import (
+    DuplicateEmailError,
+    MemberNotFoundError,
+    ValidationError,
+)
+from src.utils.validators import (
+    normalize_optional_text,
+    normalize_required_text,
+    validate_email,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +29,9 @@ class MemberService:
         normalized_email = self._validate_email(email)
 
         try:
-            member = self.member_repository.create_member(normalized_name, normalized_email)
+            member = self.member_repository.create_member(
+                normalized_name, normalized_email
+            )
         except DuplicateEmailError:
             logger.warning("Validation failure: duplicate email %s", normalized_email)
             raise
@@ -72,7 +82,9 @@ class MemberService:
             logger.warning("Validation failure: %s is empty", field_name)
             raise ValidationError(str(exc)) from exc
 
-    def _normalize_optional_field(self, value: Optional[str], field_name: str) -> Optional[str]:
+    def _normalize_optional_field(
+        self, value: Optional[str], field_name: str
+    ) -> Optional[str]:
         try:
             return normalize_optional_text(value, field_name)
         except ValueError as exc:

@@ -20,7 +20,13 @@ configure_logging()
 
 
 def main() -> None:
-    """Create dependencies and start the interactive CLI."""
+    """
+    Create dependencies and start the interactive CLI.
+
+    This function handles the application startup by establishing a database
+    connection, wiring the Dependency Injection tree (repositories -> services -> CLI),
+    and finally launching the main event loop.
+    """
     Base.metadata.create_all(engine)
 
     db = SessionLocal()

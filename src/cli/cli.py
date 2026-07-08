@@ -12,6 +12,7 @@ from src.utils.exceptions import (
     ValidationError,
 )
 
+
 class CLI:
     """Interactive command-line interface for library management."""
 
@@ -48,7 +49,14 @@ class CLI:
         while True:
             choice = self._display_menu(
                 "Book Management",
-                ["Add Book", "List Books", "Search Book by ID", "Update Book", "Delete Book", "Back"],
+                [
+                    "Add Book",
+                    "List Books",
+                    "Search Book by ID",
+                    "Update Book",
+                    "Delete Book",
+                    "Back",
+                ],
             )
 
             if choice == 1:
@@ -69,7 +77,14 @@ class CLI:
         while True:
             choice = self._display_menu(
                 "Member Management",
-                ["Register Member", "List Members", "Search Member", "Update Member", "Delete Member", "Back"],
+                [
+                    "Register Member",
+                    "List Members",
+                    "Search Member",
+                    "Update Member",
+                    "Delete Member",
+                    "Back",
+                ],
             )
 
             if choice == 1:
@@ -90,7 +105,13 @@ class CLI:
         while True:
             choice = self._display_menu(
                 "Loan Management",
-                ["Issue Book", "Return Book", "View Active Loans", "View Loans by Member", "Back"],
+                [
+                    "Issue Book",
+                    "Return Book",
+                    "View Active Loans",
+                    "View Loans by Member",
+                    "Back",
+                ],
             )
 
             if choice == 1:
@@ -223,7 +244,9 @@ class CLI:
         email = self._prompt_optional("Email")
 
         try:
-            member = self.member_service.update_member(member_id, name=name, email=email)
+            member = self.member_service.update_member(
+                member_id, name=name, email=email
+            )
         except (MemberNotFoundError, ValidationError, DuplicateEmailError) as exc:
             self._show_error(str(exc))
             return
@@ -343,7 +366,9 @@ class CLI:
         print(title)
         print("-" * 32)
 
-    def _print_rows(self, empty_message: str, headers: list[str], rows: list[tuple[object, ...]]) -> None:
+    def _print_rows(
+        self, empty_message: str, headers: list[str], rows: list[tuple[object, ...]]
+    ) -> None:
         """Print a simple tabular list of values."""
         if not rows:
             print(empty_message)
